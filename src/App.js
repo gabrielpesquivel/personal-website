@@ -1,57 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import './styles/App.css';
-import Header from './components/Header';
 import Navbar from './components/Navbar';
-import About from './components/About';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import Skills from './components/Skills';
-import Footer from './components/Footer';
-import Blog from './components/Blog';
+import City from './components/City';
+import Newspaper from './components/Newspaper';
 import Chatbot from "./components/Chatbot";
-import LoadingScreen from './components/LoadingScreen';
 
-function Home() {
+// The city is always on screen; /blog opens the newspaper on top of it.
+function Shell() {
+  const location = useLocation();
   return (
     <>
-      <Header />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Footer />
+      <Navbar />
+      <City />
+      {location.pathname === '/blog' && <Newspaper />}
+      <Chatbot />
     </>
   );
 }
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user has already seen the loading screen in this session
-    const hasSeenLoading = sessionStorage.getItem('hasSeenLoading');
-    if (hasSeenLoading) {
-      setLoading(false);
-    }
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
   }, []);
-
-  const handleLoadingComplete = () => {
-    sessionStorage.setItem('hasSeenLoading', 'true');
-    setLoading(false);
-  };
 
   return (
     <Router>
       <div className="App">
-        {loading && <LoadingScreen onComplete={handleLoadingComplete} />}
-        <div className={`main-content ${!loading ? 'fade-in' : ''}`}>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/blog" element={<Blog />} />
-          </Routes>
-          <Chatbot />
+        <div className={`main-content ${visible ? 'fade-in' : ''}`}>
+          <Shell />
         </div>
       </div>
     </Router>

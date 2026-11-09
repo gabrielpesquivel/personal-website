@@ -1,9 +1,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #131314;
-  color: #ffffff; /* Light text color */
-  text-align: center; /* Center text globally */
+  background: #090320;
+  color: #ffffff;
   overflow-x: hidden;
 }
 
@@ -14,65 +13,4 @@ body {
 
 .main-content.fade-in {
   opacity: 1;
-}
-
-header {
-  background: #131314;
-  color: #ffffff;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 3em;
-}
-
-header p {
-  font-size: 1.2em;
-}
-
-.navbar {
-  background: #333333; /* Dark navbar background */
-  padding: 10px 20px;
-  text-align: center;
-}
-
-.navbar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center; /* Center navbar items */
-}
-
-.navbar ul li {
-  margin: 0 15px;
-}
-
-.navbar ul li a {
-  color: #ffffff; /* Light text color */
-  text-decoration: none;
-}
-
-section {
-  padding: 60px 20px;
-  background: #131314;
-  color: #ffffff;
-  text-align: center; /* Center text in sections */
-}
-
-section h2 {
-  margin-top: 0;
-}
-
-footer {
-  background: #131314;
-  color: #ffffff;
-  text-align: center;
-  padding: 20px;
-}
-
-footer p {
-  margin: 0;
 }
