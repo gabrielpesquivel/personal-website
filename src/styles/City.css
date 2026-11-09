@@ -1933,58 +1933,129 @@
   color: #8f0b22;
 }
 
-/* ---------- skill tower ---------- */
+/* ---------- Skill Institute: modern university building ---------- */
 
 .skill-tower {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: #2c1764;
-  border-radius: 4px 4px 0 0;
-  box-shadow: inset calc(var(--u) * -1.6) 0 0 rgba(0, 0, 0, 0.2), 0 0 calc(var(--u) * 5) rgba(120, 60, 220, 0.25);
+  background: #1a1b3e;
+  box-shadow: 0 0 calc(var(--u) * 5) rgba(90, 140, 255, 0.2);
 }
 
-.tower-crown {
-  position: relative;
-  flex: 0 0 calc(var(--u) * 7);
-  margin: 0 calc(var(--u) * 4);
-  margin-top: calc(var(--u) * -5);
-  background: linear-gradient(180deg, #3a1f7a, #2c1764);
-  clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+.uni-roof {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: calc(var(--u) * 6);
+}
+
+.uni-garden {
+  position: absolute;
+  left: calc(var(--u) * 1.5);
+  right: calc(var(--u) * 1.5);
+  bottom: 0;
+  height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: space-around;
+  border-bottom: calc(var(--u) * 0.8) solid #2f5a3a;
 }
 
-.tower-crown span {
-  font-family: var(--sign-font);
-  font-size: calc(var(--u) * 2.1);
-  letter-spacing: 0.06em;
+.uni-tree {
+  position: relative;
+  width: calc(var(--u) * var(--r));
+  height: calc(var(--u) * var(--r) * 1.15);
+}
+
+.uni-tree::before {
+  /* canopy */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5fbf7a, #2f7a48 60%, #1f5233);
+  box-shadow: 0 0 calc(var(--u) * 0.8) rgba(95, 191, 122, 0.25);
+}
+
+.uni-tree::after {
+  /* trunk */
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 30%;
+  margin-left: -1px;
+  background: #5a3a24;
+}
+
+.uni-name {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * 0.9);
+  transform: translateX(-50%);
+  padding: 0 calc(var(--u) * 0.6);
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  font-weight: 700;
+  font-size: max(calc(var(--u) * 1.9), 13px);
+  letter-spacing: 0.32em;
+  white-space: nowrap;
   color: #fff;
-  text-shadow: 0 0 6px var(--neon-pink), 0 0 16px var(--neon-pink);
-  animation: neon-flicker 8s infinite;
+  text-shadow: 0 0 6px rgba(200, 225, 255, 0.9), 0 0 14px rgba(120, 170, 255, 0.6);
 }
 
+/* each floor is a glass box with timber fins, stacked slightly off-centre */
 .spot.tower-floor {
   position: relative;
   flex: 1 1 0;
-  border-bottom: calc(var(--u) * 0.6) solid var(--neon);
-  box-shadow: 0 calc(var(--u) * 0.4) calc(var(--u) * 1.6) -2px var(--neon);
+  background:
+    linear-gradient(180deg, rgba(150, 205, 255, 0.28), rgba(70, 110, 200, 0.18)),
+    #172046;
+  border-top: calc(var(--u) * 0.8) solid #d9d4ea;
+  border-bottom: calc(var(--u) * 0.35) solid var(--neon);
+  box-shadow: 0 calc(var(--u) * 0.3) calc(var(--u) * 1.4) -2px var(--neon), calc(var(--u) * 0.8) calc(var(--u) * 0.8) 0 rgba(0, 0, 0, 0.25);
   transition: background-color 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.spot.tower-floor:nth-of-type(odd) {
+  transform: translateX(calc(var(--u) * 1.6));
+}
+
+.spot.tower-floor:nth-of-type(even) {
+  transform: translateX(calc(var(--u) * -1.6));
+}
+
+.spot.tower-floor::after {
+  /* timber fins over the glass */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 0 30%, rgba(255, 255, 255, 0.12) 30% 36%, transparent 36% 60%, rgba(255, 255, 255, 0.07) 60% 63%, transparent 63%),
+    repeating-linear-gradient(90deg, transparent 0 calc(var(--u) * 3.4), #c98b5a calc(var(--u) * 3.4) calc(var(--u) * 4.1));
 }
 
 .spot.tower-floor:hover,
 .spot.tower-floor:focus-visible,
 .spot.tower-floor.is-active {
-  background-color: color-mix(in srgb, var(--neon) 18%, transparent);
+  background-color: color-mix(in srgb, var(--neon) 22%, #172046);
   box-shadow:
-    0 calc(var(--u) * 0.4) calc(var(--u) * 3) 0 var(--neon),
+    0 calc(var(--u) * 0.3) calc(var(--u) * 3) 0 var(--neon),
     inset 0 0 calc(var(--u) * 4) color-mix(in srgb, var(--neon) 35%, transparent);
 }
 
 .floor-windows {
+  /* rooms glowing behind the glass */
   position: absolute;
-  inset: calc(var(--u) * 1) calc(var(--u) * 1.2) calc(var(--u) * 1.4);
+  inset: calc(var(--u) * 0.8) calc(var(--u) * 0.6) calc(var(--u) * 0.6);
+  opacity: 0.8;
 }
 
 /* Tokyo-style vertical blade signs that jut out from a wall */
@@ -2044,19 +2115,38 @@
 }
 
 .tower-lobby {
-  flex: 0 0 calc(var(--u) * 9);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: calc(var(--u) * 1);
-  background: #24124f;
+  position: relative;
+  flex: 0 0 calc(var(--u) * 12);
+  border-top: calc(var(--u) * 0.8) solid #d9d4ea;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(var(--u) * 5.6), #3a3f6e calc(var(--u) * 5.6) calc(var(--u) * 6)),
+    linear-gradient(0deg, transparent 0 calc(var(--u) * 5.8), #3a3f6e calc(var(--u) * 5.8) calc(var(--u) * 6.1), transparent calc(var(--u) * 6.1)),
+    linear-gradient(180deg, #ffe7b8, #ffbe78);
+  box-shadow: 0 0 calc(var(--u) * 3) rgba(255, 190, 110, 0.45);
 }
 
-.tower-lobby span {
-  width: calc(var(--u) * 7);
-  height: calc(var(--u) * 7);
-  background: linear-gradient(180deg, #ffe0a0, #ffaa5a);
-  box-shadow: 0 0 calc(var(--u) * 3) rgba(255, 180, 90, 0.55);
+.uni-canopy {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: calc(var(--u) * 4.4);
+  height: calc(var(--u) * 0.9);
+  background: #d9d4ea;
+  box-shadow: 0 calc(var(--u) * 0.4) calc(var(--u) * 0.8) rgba(0, 0, 0, 0.35);
+}
+
+.uni-doors {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: calc(var(--u) * 8);
+  height: calc(var(--u) * 6.6);
+  transform: translateX(-50%);
+  background:
+    linear-gradient(90deg, transparent 49%, #3a3f6e 49% 51%, transparent 51%),
+    linear-gradient(180deg, #fff6dc, #ffd08a);
+  border: calc(var(--u) * 0.35) solid #3a3f6e;
+  border-bottom: 0;
 }
 
 /* ---------- The Daily Blog: old New York newspaper HQ ---------- */

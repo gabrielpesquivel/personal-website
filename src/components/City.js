@@ -246,7 +246,7 @@ function CardBody({ id, onNavigate }) {
     const cat = skills[level];
     return (
       <>
-        <p className="card-kicker">Skill Tower · Level {level + 1}</p>
+        <p className="card-kicker">Skill Institute · Level {level + 1}</p>
         <h3>{cat.category}</h3>
         <div className="card-tags" style={{ '--tag': cat.color }}>{cat.items.map((t) => <span key={t}>{t}</span>)}</div>
       </>
@@ -838,11 +838,17 @@ function Street({ goBlog }) {
         </div>
       </div>
 
-      {/* ---- Skill Tower: one floor per skill category, Languages at the foundation ---- */}
+      {/* ---- Skill Institute: one floor per skill category, Languages at the foundation ---- */}
       <StreetSign x={406} text="SKILL ST" />
-      <div className="skill-tower" style={{ left: px(424), bottom: px(GROUND_U), width: px(48), height: px(72) }}>
-        <div className="tower-crown" aria-hidden="true">
-          <span>SKILL TOWER</span>
+      <div className="skill-tower" style={{ left: px(424), bottom: px(GROUND_U), width: px(48), height: px(70) }}>
+        {/* roof garden with the institute's name along the edge */}
+        <div className="uni-roof" aria-hidden="true">
+          <div className="uni-garden">
+            {[3.2, 4.6, 3.6, 5, 3.4, 4.2].map((r, i) => (
+              <span key={i} className="uni-tree" style={{ '--r': r }} />
+            ))}
+          </div>
+          <span className="uni-name">SKILL INSTITUTE</span>
         </div>
         {skills
           .map((cat, i) => ({ cat, i }))
@@ -857,12 +863,16 @@ function Street({ goBlog }) {
               style={{ '--neon': cat.color }}
             >
               <div className="floor-windows">
-                <Windows cols={11} rows={2} seed={60 + i} lit={0.6} />
+                <Windows cols={11} rows={2} seed={60 + i} lit={0.55} />
               </div>
               <div className="blade-sign floor-blade">{cat.short}</div>
             </Spot>
           ))}
-        <div className="tower-lobby" aria-hidden="true"><span /><span /></div>
+        {/* double-height glass atrium */}
+        <div className="tower-lobby" aria-hidden="true">
+          <span className="uni-canopy" />
+          <span className="uni-doors" />
+        </div>
       </div>
       <StreetLamp x={476} />
 

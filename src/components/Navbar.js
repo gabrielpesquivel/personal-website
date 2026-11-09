@@ -5,10 +5,12 @@ import { SiLeetcode } from 'react-icons/si';
 import '../styles/Navbar.css';
 import { CITY_DISTRICT_EVENT, getCurrentDistrict, goToCityTarget } from './cityNav';
 
+// in the order they come up along the street; Blog opens the newspaper rather than driving
 const STOPS = [
   { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
   { id: 'skills', label: 'Skills' },
+  { id: 'blog', label: 'Blog', route: '/blog' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -81,17 +83,18 @@ function Navbar() {
           const active = activeId === stop.id;
           return (
             <li key={stop.id}>
-              <a href={`/#${stop.id}`} onClick={goTo(stop.id)} className={active ? 'is-active' : ''} aria-current={active ? 'location' : undefined}>
-                {stop.label}
-              </a>
+              {stop.route ? (
+                <RouterLink to={stop.route} onClick={closeMenu} className={active ? 'is-active' : ''}>
+                  {stop.label}
+                </RouterLink>
+              ) : (
+                <a href={`/#${stop.id}`} onClick={goTo(stop.id)} className={active ? 'is-active' : ''} aria-current={active ? 'location' : undefined}>
+                  {stop.label}
+                </a>
+              )}
             </li>
           );
         })}
-        <li>
-          <RouterLink to="/blog" onClick={closeMenu} className={activeId === 'blog' ? 'is-active' : ''}>
-            Blog
-          </RouterLink>
-        </li>
       </ul>
 
       <div className="nav-socials">
