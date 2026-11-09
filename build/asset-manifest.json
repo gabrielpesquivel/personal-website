@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a32bb49b.css",
+    "main.js": "/static/js/main.31ea8c5a.js",
+    "static/js/453.311b3dbc.chunk.js": "/static/js/453.311b3dbc.chunk.js",
+    "static/media/sydney-skyline.jpg": "/static/media/sydney-skyline.1981df3e6f84cc70d27e.jpg",
+    "static/media/clouds.png": "/static/media/clouds.b0afc06b2d8c32f54a99.png",
+    "static/media/bootroom.png": "/static/media/bootroom.10ef07f0673d9cebcf87.png",
+    "static/media/BootInk.png": "/static/media/BootInk.7754cbc37580d8ca196a.png",
+    "static/media/Ladder.svg": "/static/media/Ladder.d869a0f875006e418b1f59f0ab53f37e.svg",
+    "index.html": "/index.html",
+    "main.a32bb49b.css.map": "/static/css/main.a32bb49b.css.map",
+    "main.31ea8c5a.js.map": "/static/js/main.31ea8c5a.js.map",
+    "453.311b3dbc.chunk.js.map": "/static/js/453.311b3dbc.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a32bb49b.css",
+    "static/js/main.31ea8c5a.js"
+  ]
+}
