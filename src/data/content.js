@@ -29,10 +29,34 @@ export const experience = [
 // The About Me building is a movie theater; these are its signs.
 export const theater = {
   blade: 'GABRIEL',
-  marquee: ['NOW SHOWING', 'THE GABRIEL STORY', 'FILMED ON LOCATION IN SYDNEY'],
+  // the letterboard rotates through these
+  marquee: [
+    { small: 'NOW SHOWING', big: 'THE GABRIEL STORY', sub: 'FILMED ON LOCATION IN SYDNEY' },
+    { small: 'STARRING', big: 'BACKEND · DATA & AI', sub: 'AND INTRODUCING BOOTINK' },
+    { small: 'NOW RATED', big: 'SHIP IT', sub: 'SUITABLE FOR ALL AUDIENCES' },
+    { small: 'COMING SOON', big: 'PART III', sub: 'STAY TUNED' },
+  ],
   posters: [
-    { part: 'PART I', title: 'ENTERPRISE', credit: 'DATA & AI @ EY', color: '#4fe3ff' },
-    { part: 'PART II', title: 'STARTUP', credit: 'LADDER · BOOTINK', color: '#ff4fd8' },
+    {
+      part: 'PART I',
+      title: 'ENTERPRISE',
+      tagline: 'Rigor at scale.',
+      credits: 'DATA & AI @ EY · DIRECTED BY CURIOSITY',
+      rating: 'E',
+      years: '2022 – 2025',
+      art: 'skyline',
+      color: '#4fe3ff',
+    },
+    {
+      part: 'PART II',
+      title: 'STARTUP',
+      tagline: 'Move fast. Own it.',
+      credits: 'LADDER · BOOTINK · NO STUNT DOUBLES',
+      rating: 'S',
+      years: '2025 – NOW',
+      art: 'rocket',
+      color: '#ff4fd8',
+    },
   ],
 };
 

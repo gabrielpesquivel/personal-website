@@ -327,9 +327,9 @@ const CAR_BODIES = {
     head: [184, 30, 11, 3],
     extras: (paint) => (
       <g>
-        <rect x="13" y="17" width="3" height="10" fill={paint} />
-        <rect x="29" y="17" width="3" height="9" fill={paint} />
-        <path d="M1,15 L40,14 L40,18 L3,19 Z" fill={paint} />
+        <rect x="13" y="17" width="3" height="10" style={{ fill: paint }} />
+        <rect x="29" y="17" width="3" height="9" style={{ fill: paint }} />
+        <path d="M1,15 L40,14 L40,18 L3,19 Z" style={{ fill: paint }} />
         <path d="M1,15 L40,14 L40,18 L3,19 Z" fill="#000" opacity="0.25" />
         <path d="M150,31 l6,-3 M154,32 l6,-3 M158,33 l6,-3" stroke="rgba(0,0,0,0.45)" strokeWidth="1.2" />
         <circle cx="8.5" cy="31" r="2.3" className="tail" />
@@ -347,9 +347,31 @@ const CAR_BODIES = {
     head: [186, 31, 9, 3],
     extras: (paint) => (
       <g>
-        <path d="M13,27 Q11,16 20,16 L34,16 Q41,16 39,26" fill="none" stroke={paint} strokeWidth="2.6" />
+        <path d="M13,27 Q11,16 20,16 L34,16 Q41,16 39,26" fill="none" style={{ stroke: paint }} strokeWidth="2.6" />
         <path d="M13,27 Q11,16 20,16 L34,16 Q41,16 39,26" fill="none" stroke="#000" strokeOpacity="0.2" strokeWidth="2.6" />
         <rect x="4.5" y="31" width="7" height="3.2" rx="1.6" className="tail" />
+      </g>
+    ),
+  },
+  // boxy off-roader: tall flat roof, upright screen, roof rails and a spare wheel on the back
+  gwagon: {
+    body: 'M8,45 L8,6 Q8,2 12,2 L140,2 Q144,2 145,5 L149,21 L192,23 Q196,24 196,29 L196,45 Q196,47 192,47 L177,47 A16,16 0 0 0 145,47 L63,47 A16,16 0 0 0 31,47 L12,47 Q8,47 8,45 Z',
+    glass: 'M14,6 H57 V20 H14 Z M64,6 H101 V20 H64 Z M107,6 H139.5 L143,20 H107 Z',
+    pillar: 'M57,6 H64 V20 H57 Z',
+    doors: [61, 104],
+    wheels: [47, 161],
+    head: [190, 25, 4, 4.8],
+    extras: (paint) => (
+      <g>
+        <path d="M14,-0.6 H138 M22,-0.6 V2 M80,-0.6 V2 M132,-0.6 V2" style={{ stroke: paint }} strokeWidth="1.5" fill="none" />
+        <path d="M14,-0.6 H138" stroke="#000" strokeOpacity="0.25" strokeWidth="1.5" />
+        <circle cx="5.5" cy="27" r="8" fill="#0b0814" />
+        <circle cx="5.5" cy="27" r="4.2" style={{ fill: paint }} />
+        <rect x="36" y="45.4" width="104" height="1.8" rx="0.6" fill="#2a2638" />
+        <path d="M30,47 Q31,32 47,31 Q63,32 64,47 M144,47 Q145,32 161,31 Q177,32 178,47" fill="none" stroke="rgba(0,0,0,0.3)" strokeWidth="1" />
+        <path d="M150,22 H190" stroke="rgba(0,0,0,0.3)" strokeWidth="0.8" />
+        <rect x="8.2" y="22" width="2.4" height="7" rx="0.8" className="tail" />
+        <circle cx="193.2" cy="28" r="2.6" fill="#fff6d5" />
       </g>
     ),
   },
@@ -364,7 +386,7 @@ const CAR_BODIES = {
     head: [168, 31, 8, 3],
     extras: (paint) => (
       <g>
-        <path d="M36,12.5 L62,11.5 L62,14 L39,15.5 Z" fill={paint} />
+        <path d="M36,12.5 L62,11.5 L62,14 L39,15.5 Z" style={{ fill: paint }} />
         <path d="M36,12.5 L62,11.5 L62,14 L39,15.5 Z" fill="#000" opacity="0.25" />
         <rect x="39.5" y="25" width="3" height="7" rx="1" className="tail" />
         <rect x="150" y="39" width="27" height="2" fill="rgba(0,0,0,0.5)" />
@@ -389,29 +411,62 @@ function Wheel({ cx, scale = 1 }) {
   );
 }
 
-function Car({ type, paint, stripe, glow, tint, rim, className }) {
-  const b = CAR_BODIES[type];
-  const [hx, hy, hw, hh] = b.head;
-  const [w1, w2] = b.wheels;
-  const [d1, d2] = b.doors;
+// paint jobs and bodies the traffic draws from each time a car rolls back into view
+const CAR_PAINTS = [
+  { paint: '#b0101e', glow: '#ffe14f' },
+  { paint: '#ffd21f', stripe: '#d12f4a', glow: '#ff4fd8' },
+  { paint: '#1f6fe0', glow: '#4fe3ff' },
+  { paint: '#0d0c14', glow: '#8dff6b', dark: true },
+  { paint: '#f4f1ea', stripe: '#d12f4a', glow: '#ff4fd8' },
+  { paint: '#4a4b57', stripe: '#c9c6d6', glow: '#4fe3ff' },
+  { paint: '#ff7a1a', glow: '#ffe14f' },
+  { paint: '#6a2fb8', glow: '#ff4fd8' },
+  { paint: '#3f8a3a', glow: '#8dff6b' },
+  { paint: '#c9ccd6', glow: '#4fe3ff' },
+  { paint: '#5b6142', glow: '#ffe14f' },
+];
+const CAR_TYPES = Object.keys(CAR_BODIES);
+
+function dressCar(el) {
+  const p = CAR_PAINTS[Math.floor(Math.random() * CAR_PAINTS.length)];
+  el.dataset.body = CAR_TYPES[Math.floor(Math.random() * CAR_TYPES.length)];
+  el.style.setProperty('--paint', p.paint);
+  el.style.setProperty('--stripe', p.stripe || 'transparent');
+  el.style.setProperty('--glow', p.glow);
+  // dark paint gets tinted glass and a faint rim so it still reads on the road
+  el.style.setProperty('--glass', p.dark ? '#050309' : '#1a1433');
+  el.style.setProperty('--glare', p.dark ? '0.25' : '1');
+  el.style.setProperty('--rim', p.dark ? 'rgba(190, 170, 255, 0.35)' : 'none');
+}
+
+function Car({ className }) {
   return (
-    <div className={`car car-${type} ${className}`} style={{ '--glow': glow }}>
+    <div className={`car ${className}`} data-body="gt">
       <svg viewBox="0 0 204 62" aria-hidden="true">
-        <ellipse className="underglow" cx={(w1 + w2) / 2} cy="55" rx={(w2 - w1) / 2 + 40} ry="5" fill={glow} />
-        <path className="beam" d={`M${hx + hw},${hy} L${hx + hw + 70},${hy - 10} L${hx + hw + 70},${hy + 16} Z`} />
-        <path d={b.body} fill={paint} />
-        <path d={b.body} fill="url(#car-shade)" stroke={rim} strokeWidth={rim ? 0.8 : undefined} />
-        {stripe && <path d="M10,38 L194,38 L194,41 L10,41 Z" fill={stripe} opacity="0.9" clipPath={`url(#clip-${type})`} />}
-        <clipPath id={`clip-${type}`}><path d={b.body} /></clipPath>
-        <path d={b.glass} fill={tint ? '#050309' : '#1a1433'} />
-        <path d={b.glass} fill="url(#car-glass)" opacity={tint ? 0.25 : 1} />
-        <path d={b.pillar} fill={paint} />
-        <path d={`M${d1},28 L${d1},44 M${d2},28 L${d2},44`} stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" />
-        <rect x={d2 - 14} y="31" width="7" height="1.6" rx="0.8" fill="rgba(0,0,0,0.45)" />
-        {b.extras(paint)}
-        <rect x={hx} y={hy} width={hw} height={hh} rx="1" fill="#fff6d5" />
-        <Wheel cx={w1} scale={b.wheelScale} />
-        <Wheel cx={w2} scale={b.wheelScale} />
+        {Object.entries(CAR_BODIES).map(([type, b]) => {
+          const [hx, hy, hw, hh] = b.head;
+          const [w1, w2] = b.wheels;
+          const [d1, d2] = b.doors;
+          return (
+            <g key={type} className="car-body" data-type={type}>
+              <ellipse className="underglow" cx={(w1 + w2) / 2} cy="55" rx={(w2 - w1) / 2 + 40} ry="5" style={{ fill: 'var(--glow)' }} />
+              <path className="beam" d={`M${hx + hw},${hy} L${hx + hw + 70},${hy - 10} L${hx + hw + 70},${hy + 16} Z`} />
+              <path d={b.body} style={{ fill: 'var(--paint)' }} />
+              <path d={b.body} fill="url(#car-shade)" style={{ stroke: 'var(--rim)' }} strokeWidth="0.8" />
+              <clipPath id={`clip-${type}`}><path d={b.body} /></clipPath>
+              <path d="M10,38 L194,38 L194,41 L10,41 Z" style={{ fill: 'var(--stripe)' }} opacity="0.9" clipPath={`url(#clip-${type})`} />
+              <path d={b.glass} style={{ fill: 'var(--glass)' }} />
+              <path d={b.glass} fill="url(#car-glass)" style={{ opacity: 'var(--glare)' }} />
+              <path d={b.pillar} style={{ fill: 'var(--paint)' }} />
+              <path d={`M${d1},28 L${d1},44 M${d2},28 L${d2},44`} stroke="rgba(0,0,0,0.35)" strokeWidth="0.8" />
+              <rect x={d2 - 14} y="31" width="7" height="1.6" rx="0.8" fill="rgba(0,0,0,0.45)" />
+              {b.extras('var(--paint)')}
+              <rect x={hx} y={hy} width={hw} height={hh} rx="1" fill="#fff6d5" />
+              <Wheel cx={w1} scale={b.wheelScale} />
+              <Wheel cx={w2} scale={b.wheelScale} />
+            </g>
+          );
+        })}
       </svg>
     </div>
   );
@@ -465,6 +520,79 @@ function SideLadder({ h }) {
   );
 }
 
+/* ---------- The Gabriel: posters, marquee, premiere ---------- */
+
+function PosterArt({ kind }) {
+  if (kind === 'rocket') {
+    return (
+      <svg className="poster-art" viewBox="0 0 40 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="40" height="20" fill="#2a0f3a" />
+        {[[4, 3], [9, 7], [31, 4], [36, 9], [27, 2], [13, 2]].map(([cx, cy]) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="0.35" fill="#fff" />)}
+        <circle cx="16" cy="16" r="2.6" fill="#c9bde6" opacity="0.5" />
+        <circle cx="24" cy="16.5" r="2.2" fill="#c9bde6" opacity="0.45" />
+        <rect x="12" y="15.5" width="16" height="4.5" fill="#3a2470" />
+        <path d="M12,15.5 L20,12.8 L28,15.5 Z" fill="#4a2f8c" />
+        <path d="M14,20 V17 H26 V20" fill="none" stroke="#1d1240" strokeWidth="0.4" />
+        <path d="M19,11 L20,14.5 L21,11 Z" fill="#ffb02e" />
+        <path d="M20,1.5 C22.4,4 22.4,8 21.4,11 L18.6,11 C17.6,8 17.6,4 20,1.5 Z" fill="#f4f1ff" />
+        <path d="M18.6,9 L17.2,11.4 L18.8,11 Z M21.4,9 L22.8,11.4 L21.2,11 Z" fill="#ff4fd8" />
+        <circle cx="20" cy="5.6" r="0.9" fill="#4fe3ff" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="poster-art" viewBox="0 0 40 20" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="40" height="20" fill="#0d1640" />
+      <circle cx="33" cy="4.5" r="2" fill="#fff6d8" opacity="0.9" />
+      <g fill="#1f2d66">
+        <rect x="2" y="10" width="6" height="10" />
+        <rect x="9" y="6" width="7" height="14" />
+        <rect x="17" y="9" width="5" height="11" />
+        <rect x="23" y="3" width="7" height="17" />
+        <rect x="31" y="11" width="7" height="9" />
+      </g>
+      <g fill="#ffd77a" opacity="0.35">
+        <rect x="10.5" y="8" width="1.2" height="1.2" />
+        <rect x="13" y="12" width="1.2" height="1.2" />
+        <rect x="3.5" y="13" width="1.2" height="1.2" />
+        <rect x="33" y="14" width="1.2" height="1.2" />
+      </g>
+      <rect className="lone-window" x="25.5" y="6.5" width="1.8" height="1.8" fill="#ffe14f" />
+    </svg>
+  );
+}
+
+// the marquee letterboard flips between a few lines
+function MarqueeBoard() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setI((n) => (n + 1) % theater.marquee.length), 4200);
+    return () => clearInterval(id);
+  }, []);
+  const line = theater.marquee[i];
+  return (
+    <div className="marquee-board">
+      <div key={i} className="marquee-line">
+        <small>{line.small}</small>
+        <strong>{line.big}</strong>
+        <span>{line.sub}</span>
+      </div>
+    </div>
+  );
+}
+
+// velvet rope between two brass stanchions
+function VelvetRope({ x1, x2 }) {
+  const { u } = useContext(CityCtx);
+  return (
+    <div className="velvet-rope" style={{ left: x1 * u, width: (x2 - x1) * u, bottom: (GROUND_U - 2.4) * u }} aria-hidden="true">
+      <span className="stanchion" />
+      <span className="rope" />
+      <span className="stanchion" />
+    </div>
+  );
+}
+
 /* ---------- Gabidon FM contact icons ---------- */
 
 const CONTACT_ICONS = { Email: FaEnvelope, LinkedIn: FaLinkedin, GitHub: FaGithub, Leetcode: SiLeetcode };
@@ -514,7 +642,7 @@ function Metro({ x }) {
   const ghost = useContext(GhostCtx);
   const { u } = ctx;
   return (
-    <div className="metro" style={{ left: x * u, bottom: GROUND_U * u, width: 74 * u, height: 23 * u }}>
+    <div className="metro" style={{ left: x * u, bottom: GROUND_U * u, width: 82 * u, height: 23 * u }}>
       {/* departure board: each line drives you to that part of the city */}
       <div className="metro-board">
         <div className="metro-board-panel">
@@ -540,9 +668,41 @@ function Metro({ x }) {
         </div>
         <div className="metro-board-legs" aria-hidden="true" />
       </div>
+      {/* a second bench to wait on, under the train times */}
+      {/* bin and a shiba, evenly spaced between the right planter and this bench */}
+      <div className="bin" style={{ left: `calc(var(--u) * 58.8)` }} aria-hidden="true" />
+      <svg className="shiba" style={{ left: `calc(var(--u) * 62)` }} viewBox="0 0 20 17" aria-hidden="true">
+        <path className="shiba-tail" d="M5.6,8 C1.2,6.6 1.6,1.4 5.6,2.4 C7.4,2.9 7.2,5.6 5.4,5.4" fill="none" stroke="#d9893c" strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M5,16 C4,11 5,7.2 9,6.6 C12,6.2 13.4,9 13.2,12 L13,16 Z" fill="#d9893c" />
+        <ellipse cx="7.6" cy="13.6" rx="3" ry="2.5" fill="#c47a33" />
+        <path d="M11.4,8 C14,8.6 14.2,13 12.8,16 L11,16 Z" fill="#f6e3c4" />
+        <rect x="11.6" y="12" width="1.2" height="4" rx="0.5" fill="#f6e3c4" />
+        <path d="M12.2,2.6 L12.6,-0.4 L14.2,1.7 Z M14.8,1.6 L16.4,-0.4 L16.6,2.8 Z" fill="#d9893c" />
+        <path d="M12.9,1.9 L13,0.7 L13.7,1.6 Z M15.4,1.6 L16,0.8 L16.1,2.1 Z" fill="#f6c9a0" />
+        <circle cx="14.4" cy="5" r="3.4" fill="#d9893c" />
+        <ellipse cx="16.6" cy="6.3" rx="1.9" ry="1.25" fill="#f6e3c4" />
+        <circle cx="18.3" cy="5.9" r="0.55" fill="#1a1626" />
+        <circle cx="15.3" cy="4.3" r="0.45" fill="#1a1626" />
+        <path d="M13.6,7.2 Q14.8,8.4 16.4,7.4" fill="none" stroke="#f6e3c4" strokeWidth="0.9" />
+      </svg>
+      <div className="bench" style={{ left: `calc(var(--u) * 67.4)` }} aria-hidden="true"><span /></div>
+
+      {/* street furniture around the station */}
+      <div className="vending" aria-hidden="true">
+        <span className="vending-glass">
+          {['#ff3b5c', '#4fe3ff', '#ffe14f', '#8dff6b', '#ff9a4f', '#c46bff', '#4f8dff', '#ff4fd8', '#ffe14f'].map((c, i) => (
+            <i key={i} style={{ background: c }} />
+          ))}
+        </span>
+        <span className="vending-panel" />
+      </div>
+      <div className="bench" aria-hidden="true"><span /></div>
+      <div className="planter" style={{ left: `calc(var(--u) * 17)` }} aria-hidden="true"><span /></div>
+      <div className="planter" style={{ left: `calc(var(--u) * 53.8)` }} aria-hidden="true"><span /></div>
 
       {/* the entrance itself */}
       <div className="metro-entrance" aria-hidden="true">
+        <div className="metro-wall" />
         <span className="metro-lamp ml-left" />
         <span className="metro-lamp ml-right" />
         <div className="metro-sign">
@@ -706,13 +866,17 @@ function Street({ goBlog }) {
         <div className="lane" />
       </div>
       <Spill x={576} w={48} color="rgba(255, 180, 90, 0.5)" />
+      <Spill x={47} w={28} color="rgba(255, 210, 140, 0.5)" />
+      <Spill x={42} w={8} color="rgba(109, 255, 154, 0.35)" />
+      <Spill x={72} w={8} color="rgba(109, 255, 154, 0.35)" />
+      <Spill x={22} w={10} color="rgba(120, 220, 255, 0.4)" />
       <Spill x={128} w={48} color="rgba(255, 207, 106, 0.55)" />
       <Spill x={390} w={20} color="rgba(255, 150, 80, 0.5)" />
       <Spill x={430} w={36} color="rgba(255, 190, 110, 0.45)" />
       <Spill x={480} w={40} color="rgba(255, 210, 130, 0.5)" />
 
       {/* storm drains along the curb */}
-      <Grate x={56} />
+      <Grate x={58.5} steam />
       <Grate x={216} steam />
       <Grate x={362} />
       <Grate x={455} steam />
@@ -721,6 +885,20 @@ function Street({ goBlog }) {
       {/* rooftop cats: black on The Gabriel's ledge, orange on the newspaper's cornice */}
       <Cat x={134.4} y={GROUND_U + 44} fur="#0b0912" eyes="#ffe14f" />
       <Cat x={515.4} y={GROUND_U + 52.4} fur="#f08a2c" eyes="#7dff8a" stripes="#b8571a" flip />
+
+      {/* premiere night at The Gabriel: red carpet, velvet ropes, paparazzi, and a Walk of Fame star */}
+      <div className="red-carpet" style={{ left: px(141), width: px(22), bottom: px(GROUND_U - 2.9) }} aria-hidden="true" />
+      <VelvetRope x1={141} x2={146.5} />
+      <VelvetRope x1={157.5} x2={163} />
+      <div className="fame-star" style={{ left: px(134.6), bottom: px(GROUND_U - 2.7) }} aria-hidden="true">
+        <span className="fame-star-icon">★</span>
+        <span className="fame-star-name">{profile.name}</span>
+      </div>
+      <div className="paparazzi" aria-hidden="true">
+        {[140, 149, 156, 164].map((fx, i) => (
+          <span key={fx} style={{ left: px(fx), bottom: px(GROUND_U + 2 + (i % 2) * 3), animationDelay: `${i * 1.7}s` }} />
+        ))}
+      </div>
 
       {/* premiere searchlights sweeping the sky in front of The Gabriel */}
       <div className="searchlight sl-left" style={{ left: px(126.5), bottom: px(GROUND_U - 1.4) }} aria-hidden="true"><span className="sl-beam" /><span className="sl-unit" /></div>
@@ -737,7 +915,8 @@ function Street({ goBlog }) {
       </Spot>
 
       {/* arriving in the city: a metro entrance under the Welcome sign */}
-      <Metro x={24} />
+      {/* x matches the Welcome sign's left edge so the entrance centres between its poles */}
+      <Metro x={22} />
 
       <Building x={104} w={24} h={68} seed={11} color="#33186c" className="antenna" />
 
@@ -753,9 +932,16 @@ function Street({ goBlog }) {
           <div className="theater-entrance">
             {theater.posters.map((p, i) => (
               <div key={p.title} className={`poster ${i ? 'poster-right' : 'poster-left'}`} style={{ '--neon': p.color }}>
-                <small>{p.part}</small>
+                <span className="poster-billing">{profile.name}</span>
+                <PosterArt kind={p.art} />
+                <span className="poster-part">{p.part}</span>
                 <strong>{p.title}</strong>
-                <em>{p.credit}</em>
+                <em className="poster-tagline">{p.tagline}</em>
+                <span className="poster-credits">{p.credits}</span>
+                <span className="poster-foot">
+                  <b>{p.rating}</b>
+                  <i>{p.years}</i>
+                </span>
               </div>
             ))}
             <div className="theater-door td-left" />
@@ -768,11 +954,7 @@ function Street({ goBlog }) {
         </div>
         <div className="marquee">
           <div className="marquee-bulbs" />
-          <div className="marquee-board">
-            <small>{theater.marquee[0]}</small>
-            <strong>{theater.marquee[1]}</strong>
-            <span>{theater.marquee[2]}</span>
-          </div>
+          <MarqueeBoard />
           <div className="marquee-bulbs" />
         </div>
         <div className="theater-blade">
@@ -1008,6 +1190,7 @@ function City() {
   const txRef = useRef(0); // current street offset in px, always within [0, TRACK_U * u)
   const glideRef = useRef(null); // in-flight nav glide { from, to, start, dur }
   const pausedUntilRef = useRef(0);
+  const carsResetRef = useRef(false);
 
   const [size, setSize] = useState({ u: 8, vw: 1200, vh: 800 });
   const [activeId, setActiveId] = useState(null);
@@ -1103,9 +1286,50 @@ function City() {
     let velocity = 0;
     pausedUntilRef.current = last + 1200;
 
+    // traffic lives in the city: cars keep their own speed, and the camera's movement slides them
+    // past, so a fast menu glide leaves them behind and new ones roll into frame
+    const CAR_U = 20;
+    const lanes = { far: 20, near: -12 }; // street units per second (+ is rightwards)
+    let cars = [];
+    const setupCars = () => {
+      const { vw } = metrics.current;
+      cars = [...document.querySelectorAll('.traffic .car')].map((el, i) => {
+        const lane = el.classList.contains('lane-far') ? 'far' : 'near';
+        dressCar(el);
+        return { el, lane, x: vw * [0.15, 0.65, 0.4, 0.9][i % 4] };
+      });
+    };
+    const moveCars = (dt, camDelta) => {
+      const { u, vw } = metrics.current;
+      const w = CAR_U * u;
+      const margin = 8 * u;
+      if (carsResetRef.current) {
+        carsResetRef.current = false;
+        setupCars();
+      }
+      cars.forEach((c) => {
+        c.x += (reduce ? 0 : lanes[c.lane] * u * dt) - camDelta;
+      });
+      cars.forEach((c) => {
+        const mates = cars.filter((o) => o !== c && o.lane === c.lane).map((o) => o.x);
+        const gap = (14 + Math.random() * 30) * u;
+        if (c.x < -w - margin) {
+          // fell off the left: bring it in from beyond the right edge, behind any car already there
+          c.x = Math.max(vw + margin * 0.5, ...mates.map((x) => x + w + gap));
+          dressCar(c.el);
+        } else if (c.x > vw + margin) {
+          c.x = Math.min(-w - margin * 0.5, ...mates.map((x) => x - w - gap));
+          dressCar(c.el);
+        }
+        c.el.style.transform = `translate3d(${Math.round(c.x)}px,0,0)`;
+      });
+    };
+    setupCars();
+
     const tick = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
+      let camDelta = 0;
       const { u } = metrics.current;
       const period = TRACK_U * u;
       const glide = glideRef.current;
@@ -1115,7 +1339,10 @@ function City() {
       if (glide) {
         const t = Math.min(1, (now - glide.start) / glide.dur);
         const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; // ease in-out
-        txRef.current = glide.from + (glide.to - glide.from) * e;
+        const raw = glide.from + (glide.to - glide.from) * e;
+        camDelta = raw - (glide.last ?? glide.from);
+        glide.last = raw;
+        txRef.current = raw;
         if (t >= 1) {
           glideRef.current = null;
           velocity = 0;
@@ -1126,9 +1353,11 @@ function City() {
       } else if (!reduce && now >= pausedUntilRef.current) {
         velocity += (SPEED_U * u - velocity) * Math.min(1, dt * 1.2); // ease back up to speed
         txRef.current += velocity * dt;
+        camDelta = velocity * dt;
       }
       txRef.current = ((txRef.current % period) + period) % period;
       paint();
+      moveCars(dt, camDelta);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -1148,6 +1377,7 @@ function City() {
     if (instant || reduce) {
       glideRef.current = null;
       txRef.current = from + delta;
+      carsResetRef.current = true; // fresh traffic for the new spot
     } else {
       glideRef.current = { from, to: from + delta, start: performance.now(), dur: clamp((delta / u) * 5, 700, 2400) };
     }
@@ -1312,10 +1542,10 @@ function City() {
                 </linearGradient>
               </defs>
             </svg>
-            <Car type="gt" paint="#1f6fe0" glow="#4fe3ff" className="lane-far car-a" />
-            <Car type="hatch" paint="#ffd21f" stripe="#d12f4a" glow="#ff4fd8" className="lane-far car-c" />
-            <Car type="tourer" paint="#b0101e" glow="#ffe14f" className="lane-near car-b" />
-            <Car type="gt" paint="#0d0c14" glow="#8dff6b" tint rim="rgba(190, 170, 255, 0.35)" className="lane-near car-d" />
+            <Car className="lane-far car-a" />
+            <Car className="lane-far car-c" />
+            <Car className="lane-near car-b" />
+            <Car className="lane-near car-d" />
           </div>
 
 

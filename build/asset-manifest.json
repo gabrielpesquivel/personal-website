@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.277ca65c.css",
-    "main.js": "/static/js/main.70d0d33b.js",
+    "main.css": "/static/css/main.ce2f792a.css",
+    "main.js": "/static/js/main.0cbfba68.js",
     "static/js/453.311b3dbc.chunk.js": "/static/js/453.311b3dbc.chunk.js",
     "static/media/bootink-logo.png": "/static/media/bootink-logo.9df75301bcd267664579.png",
     "static/media/Ladder.svg": "/static/media/Ladder.d869a0f875006e418b1f59f0ab53f37e.svg",
     "index.html": "/index.html",
-    "main.277ca65c.css.map": "/static/css/main.277ca65c.css.map",
-    "main.70d0d33b.js.map": "/static/js/main.70d0d33b.js.map",
+    "main.ce2f792a.css.map": "/static/css/main.ce2f792a.css.map",
+    "main.0cbfba68.js.map": "/static/js/main.0cbfba68.js.map",
     "453.311b3dbc.chunk.js.map": "/static/js/453.311b3dbc.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.277ca65c.css",
-    "static/js/main.70d0d33b.js"
+    "static/css/main.ce2f792a.css",
+    "static/js/main.0cbfba68.js"
   ]
 }
