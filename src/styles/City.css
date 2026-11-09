@@ -43,6 +43,13 @@
   pointer-events: none;
 }
 
+/* wide screens have room beside the menu capsule: sit level with it */
+@media (min-width: 1480px) {
+  .city-credit {
+    top: 34px;
+  }
+}
+
 /* ---------- sky ---------- */
 
 .sky {
@@ -168,16 +175,6 @@
 .blimp:focus-visible {
   outline: 2px dashed var(--neon-cyan);
   outline-offset: 4px;
-}
-
-.moon-flag {
-  position: absolute;
-  left: 66%;
-  bottom: 80%;
-  width: calc(var(--u) * 1.53);
-  height: calc(var(--u) * 1.4);
-  overflow: visible;
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
 }
 
 @keyframes blimp-drift {

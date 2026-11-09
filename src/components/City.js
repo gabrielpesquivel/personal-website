@@ -1237,28 +1237,7 @@ function City() {
           <p className="city-credit">Inspired by Roku City</p>
           <div className="sky" aria-hidden="true">
             <Stars />
-            <div className="moon">
-              {/* we landed: a little Australian flag on the rim */}
-              <svg className="moon-flag" viewBox="0 0 24 22" aria-hidden="true">
-                <rect x="1" y="1.2" width="0.7" height="20.8" fill="#d8d2e8" />
-                <rect x="1" y="1.2" width="21.5" height="0.5" fill="#d8d2e8" />
-                <g transform="translate(1.7 1.7)">
-                  <rect width="20" height="10" fill="#00247d" />
-                  <path d="M0,0 L10,5 M10,0 L0,5" stroke="#fff" strokeWidth="1.1" />
-                  <path d="M0,0 L10,5 M10,0 L0,5" stroke="#cf142b" strokeWidth="0.4" />
-                  <path d="M5,0 V5 M0,2.5 H10" stroke="#fff" strokeWidth="1.7" />
-                  <path d="M5,0 V5 M0,2.5 H10" stroke="#cf142b" strokeWidth="1" />
-                  <g fill="#fff">
-                    <circle cx="5" cy="7.5" r="1.25" />
-                    <circle cx="15" cy="2.1" r="0.6" />
-                    <circle cx="12.6" cy="4.6" r="0.6" />
-                    <circle cx="17.4" cy="4.1" r="0.6" />
-                    <circle cx="15" cy="8.4" r="0.6" />
-                    <circle cx="16.1" cy="5.9" r="0.35" />
-                  </g>
-                </g>
-              </svg>
-            </div>
+            <div className="moon" />
           </div>
 
           {/* the blimp flies in the distance, behind every skyline layer */}
