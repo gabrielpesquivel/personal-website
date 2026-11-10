@@ -125,7 +125,8 @@ function Building({ x, w, h, base = GROUND_U, color = '#34196a', seed = 1, lit, 
   );
 }
 
-function Spot({ id, at, label, className = '', style, onActivate, children }) {
+// `quiet` spots do their thing on click only: no card on hover or focus
+function Spot({ id, at, label, className = '', style, onActivate, quiet, children }) {
   const ctx = useContext(CityCtx);
   const ghost = useContext(GhostCtx);
   const active = ctx.activeId === id;
@@ -138,12 +139,12 @@ function Spot({ id, at, label, className = '', style, onActivate, children }) {
       tabIndex={ghost ? -1 : 0}
       aria-label={label}
       aria-expanded={onActivate ? undefined : active}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && ctx.mouseMoved() && ctx.open(id, e.currentTarget, 'hover')}
-      onPointerMove={(e) => e.pointerType === 'mouse' && !active && ctx.open(id, e.currentTarget, 'hover')}
-      onPointerLeave={(e) => e.pointerType === 'mouse' && ctx.scheduleClose()}
+      onPointerEnter={(e) => !quiet && e.pointerType === 'mouse' && ctx.mouseMoved() && ctx.open(id, e.currentTarget, 'hover')}
+      onPointerMove={(e) => !quiet && e.pointerType === 'mouse' && !active && ctx.open(id, e.currentTarget, 'hover')}
+      onPointerLeave={(e) => !quiet && e.pointerType === 'mouse' && ctx.scheduleClose()}
       onFocus={(e) => {
         ctx.reveal(at);
-        ctx.open(id, e.currentTarget, 'focus');
+        if (!quiet) ctx.open(id, e.currentTarget, 'focus');
       }}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && ctx.scheduleClose()}
       onClick={(e) => activate(e.currentTarget)}
@@ -411,23 +412,6 @@ function CardBody({ id, onNavigate }) {
         <p className="card-kicker">Skill Institute · Level {level + 1}</p>
         <h3>{cat.category}</h3>
         <div className="card-tags" style={{ '--tag': cat.color }}>{cat.items.map((t) => <span key={t}>{t}</span>)}</div>
-      </>
-    );
-  }
-  if (id === 'blog') {
-    return (
-      <>
-        <p className="card-kicker">The Daily Blog</p>
-        <h3>Latest headlines</h3>
-        <ul className="card-list">
-          {blogPosts.map((p) => (
-            <li key={p.id}>
-              <button type="button" onClick={onNavigate}>{p.title.replace(/^Blog Post \d+:\s*/, '')}</button>
-              <small>{p.date}</small>
-            </li>
-          ))}
-        </ul>
-        <p className="card-hint">Click the newsstand to read the blog.</p>
       </>
     );
   }
@@ -1978,7 +1962,7 @@ function Street({ goBlog }) {
 
       {/* ---- Broadcast Hill ---- */}
       {/* The Daily Blog: an old New York newspaper headquarters */}
-      <Spot id="blog" at={500} label="The Daily Blog building: open the blog" onActivate={goBlog} className="news-hq" style={{ left: px(482), bottom: px(GROUND_U), width: px(36), height: px(60) }}>
+      <Spot id="blog" at={500} label="The Daily Blog building: open the blog" onActivate={goBlog} quiet className="news-hq" style={{ left: px(482), bottom: px(GROUND_U), width: px(36), height: px(60) }}>
         <div className="news-roof" style={{ bottom: px(52) }} aria-hidden="true">
           <div className="news-roof-board">The Daily Blog</div>
           <div className="news-roof-scaffold" />
@@ -2255,7 +2239,8 @@ function City() {
         dressCar(el);
         // spread each lane's cars across the screen, the two lanes out of step
         const slot = seen[lane]++;
-        return { el, lane, x: vw * ((lane === 'far' ? 0.08 : 0.3) + slot * 0.4) };
+        // each lane's second car starts off-screen on the side it will drive in from
+        return { el, lane, x: lane === 'far' ? vw * (0.15 - slot * 0.65) : vw * (0.55 + slot * 0.75) };
       });
     };
     const moveCars = (dt, camDelta) => {
@@ -2271,15 +2256,54 @@ function City() {
       });
       cars.forEach((c) => {
         const mates = cars.filter((o) => o !== c && o.lane === c.lane).map((o) => o.x);
-        const gap = (14 + Math.random() * 30) * u;
+        // Two dials for how busy the road feels. `wait` is how far off-screen a recycled car is parked
+        // before it drives back in, so each lane is often empty for a while. `gap` is the least room it
+        // leaves behind the other car in its lane.
+        const wait = (8 + Math.random() * 62) * u;
+        const gap = (30 + Math.random() * 40) * u;
         if (c.x < -w - margin) {
           // fell off the left: bring it in from beyond the right edge, behind any car already there
-          c.x = Math.max(vw + margin * 0.5, ...mates.map((x) => x + w + gap));
+          c.x = Math.max(vw + wait, ...mates.map((x) => x + w + gap));
           dressCar(c.el);
         } else if (c.x > vw + margin) {
-          c.x = Math.min(-w - margin * 0.5, ...mates.map((x) => x - w - gap));
+          c.x = Math.min(-w - wait, ...mates.map((x) => x - w - gap));
           dressCar(c.el);
         }
+      });
+
+      // House rule: between one and three vehicles in view at any moment.
+      // Far-lane cars drive in from the left and out to the right; near-lane cars the other way.
+      const inView = (c) => c.x + w > 0 && c.x < vw;
+      const seen = cars.filter(inView);
+      if (seen.length >= 3) {
+        // full: anything about to drive in waits just off-screen
+        cars.forEach((c) => {
+          if (inView(c)) return;
+          if (c.lane === 'far' && c.x < 0) c.x = Math.min(c.x, -w - 1);
+          if (c.lane === 'near' && c.x >= vw) c.x = Math.max(c.x, vw + 1);
+        });
+      }
+      const last = seen.length === 1 ? seen[0] : null;
+      const leaving = last && (last.lane === 'far' ? vw - last.x : last.x + w) < 8 * u;
+      if (seen.length === 0 || leaving) {
+        // about to be empty: start the nearest waiting car on its way in
+        const toEdge = (c) => Math.abs(c.lane === 'far' ? -w - c.x : c.x - vw);
+        const next = cars.filter((c) => !inView(c)).sort((a, b) => toEdge(a) - toEdge(b))[0];
+        if (next) next.x = next.lane === 'far' ? -w + 2 : vw - 2;
+      }
+
+      // two can arrive in the same instant: send the latest arrivals back out until three remain
+      const entering = (c) => inView(c) && (c.lane === 'far' ? c.x < 0 : c.x + w > vw);
+      const shown = (c) => Math.min(c.x + w, vw) - Math.max(c.x, 0);
+      let over = cars.filter(inView).length - 3;
+      cars
+        .filter(entering)
+        .sort((a, b) => shown(a) - shown(b))
+        .forEach((c) => {
+          if (over-- > 0) c.x = c.lane === 'far' ? -w - 1 : vw + 1;
+        });
+
+      cars.forEach((c) => {
         c.el.style.transform = `translate3d(${Math.round(c.x)}px,0,0)`;
       });
     };
@@ -2565,10 +2589,8 @@ function City() {
             </svg>
             <Car className="lane-far car-a" />
             <Car className="lane-far car-c" />
-            <Car className="lane-far car-e" />
             <Car className="lane-near car-b" />
             <Car className="lane-near car-d" />
-            <Car className="lane-near car-f" />
           </div>
 
 
