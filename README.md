@@ -1,34 +1,34 @@
 # Gabriel Esquivel — Personal Website
 
-Personal site of Gabriel Esquivel, Co-Founder & COO at [BootInk](https://3d.bootink.com). Single-page React app with an animated header, experience carousel, projects, and contact links.
+Personal site of Gabriel Esquivel, Co-founder at [Bootink](https://bootink.com). A single-page React app drawn as a side-scrolling neon city (inspired by Roku City): each section of the portfolio is a building on one street, and the blog opens as a newspaper on top of it.
 
 ## Stack
 
-- React 18 (Create React App)
-- [motion](https://motion.dev) for animations
-- react-spring-3d-carousel for the experience section
-- Deployed to GitHub Pages via `gh-pages`
+- React 18 (Create React App), plain JavaScript and CSS
+- react-router-dom for the `/blog` overlay
+- react-icons
+- Node 24.x
 
 ## Development
 
 ```bash
-npm ci        # install dependencies
-npm start     # dev server at http://localhost:3000
-```
-
-## Deployment
-
-```bash
-npm run deploy   # builds and pushes to the gh-pages branch
+npm ci                          # install dependencies
+npm start                       # dev server at http://localhost:3000
+npm test -- --watchAll=false    # run the tests once
+npm run build                   # production build into build/ (not committed)
 ```
 
 ## Structure
 
 ```
 src/
-  components/   # one component per section (Header, About, Experience, Projects, Contact, ...)
+  data/content.js      # all copy and data: profile, about, experience, skills, contact, blog posts
+  components/City.js   # the city scene and every building in it
+  components/cityNav.js  # event bridge between the navbar and the city
+  components/Navbar.js
+  components/Newspaper.js  # the /blog overlay
   components/Images/
-  styles/       # one CSS file per component
+  styles/              # one CSS file per component
 ```
 
-To add an experience entry, append to the `experiences` array in `src/components/Experience.js` (set `darkLogo: true` for light-colored logos). Projects live in the `projects` array in `src/components/Projects.js`.
+To change content, edit `src/data/content.js`. Add an experience entry to the `experience` array (`look` picks the tower style, `face` should match the logo's background); add a blog post to `blogPosts`.
