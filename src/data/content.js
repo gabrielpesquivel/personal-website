@@ -17,13 +17,14 @@ export const about = [
 
 // `face` matches each logo's own background so the logo sits flush on its billboard.
 // `start` is the year painted on the sidewalk; `years` is the brass plate by the door.
+// `credit` is the short billing used on the cinema's signs.
 // `look` picks the tower's architecture on Career Ave; `lights` (0–1) overrides how many windows are lit.
 export const experience = [
-  { id: 'bootink', company: 'Bootink', role: 'Co-founder', image: BootinkImage, color: '#ff9a4f', face: '#040707', look: 'ink', lights: 1, start: '2026', years: '2026 – NOW', current: true },
-  { id: 'ladder', company: 'Ladder', role: 'Lead Software Engineer', image: LadderImage, color: '#ff4fd8', face: '#0b0b10', look: 'ladder', lights: 0, start: '2025', years: '2025' },
-  { id: 'ey', company: 'EY', role: 'AI & Data Technology Consultant Vacationer', image: EYImage, color: '#ffe14f', face: '#ffffff', look: 'glass', start: '2024', years: '2024 – 2025' },
-  { id: 'sunswift', company: 'Sunswift', role: 'Embedded Systems Software Engineer', image: sunswiftImage, color: '#4fe3ff', face: '#3e3e40', look: 'solar', start: '2024', years: '2024' },
-  { id: 'mercury', company: 'Mercury', role: 'Intern Mechatronic Engineer', image: mercuryImage, color: '#8dff6b', face: '#ffffff', look: 'workshop', start: '2022', years: '2022 – 2024' },
+  { id: 'bootink', credit: 'Co-founder', company: 'Bootink', role: 'Co-founder', image: BootinkImage, color: '#ff9a4f', face: '#040707', look: 'ink', lights: 1, start: '2026', years: '2026 – NOW', current: true },
+  { id: 'ladder', credit: 'Lead Engineer', company: 'Ladder', role: 'Lead Software Engineer', image: LadderImage, color: '#ff4fd8', face: '#0b0b10', look: 'ladder', lights: 0, start: '2025', years: '2025' },
+  { id: 'ey', credit: 'Data & AI Consultant', company: 'EY', role: 'AI & Data Technology Consultant Vacationer', image: EYImage, color: '#ffe14f', face: '#ffffff', look: 'glass', start: '2024', years: '2024 – 2025' },
+  { id: 'sunswift', credit: 'Embedded Engineer', company: 'Sunswift', role: 'Embedded Systems Software Engineer', image: sunswiftImage, color: '#4fe3ff', face: '#3e3e40', look: 'solar', start: '2024', years: '2024' },
+  { id: 'mercury', credit: 'Mechatronics Intern', company: 'Mercury', role: 'Intern Mechatronic Engineer', image: mercuryImage, color: '#8dff6b', face: '#ffffff', look: 'workshop', start: '2022', years: '2022 – 2024' },
 ];
 
 // The About Me building is a movie theater; these are its signs.
@@ -32,8 +33,9 @@ export const theater = {
   // the letterboard rotates through these
   marquee: [
     { small: 'NOW SHOWING', big: 'THE GABRIEL STORY', sub: 'FILMED ON LOCATION IN SYDNEY' },
-    { small: 'STARRING', big: 'BACKEND · DATA & AI', sub: 'AND INTRODUCING BOOTINK' },
-    { small: 'NOW RATED', big: 'SHIP IT', sub: 'SUITABLE FOR ALL AUDIENCES' },
+    { small: 'STARRING', big: 'A BACKEND ENGINEER', sub: 'ENTERPRISE RIGOR · STARTUP PACE' },
+    { small: 'DOUBLE FEATURE', big: 'ENTERPRISE & STARTUP', sub: 'EY · LADDER · BOOTINK' },
+    { small: 'FEATURE PRESENTATION', big: 'CO-FOUNDER @ BOOTINK', sub: '2026 – NOW' },
     { small: 'COMING SOON', big: 'PART III', sub: 'STAY TUNED' },
   ],
   posters: [

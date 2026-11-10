@@ -1,4 +1,4 @@
-/* The Daily Blog: a newspaper that spins onto the screen over the city. */
+/* The Daily Blog: a folded newspaper that lands over the city and opens out. */
 
 .paper-backdrop {
   position: fixed;
@@ -14,7 +14,7 @@
 }
 
 .paper-backdrop.is-closing {
-  animation: paper-dim-out 0.38s ease-in both;
+  animation: paper-dim-out 0.3s ease-in 0.4s both;
 }
 
 @keyframes paper-dim-in { from { opacity: 0; } }
@@ -41,7 +41,8 @@
     0 0 0 1px rgba(0, 0, 0, 0.15),
     inset 0 0 60px rgba(120, 95, 50, 0.15);
   outline: none;
-  animation: paper-spin-in 0.9s cubic-bezier(0.2, 0.9, 0.25, 1.05) both;
+  transform: rotate(-0.6deg);
+  animation: paper-open 1s both;
 }
 
 .paper::before {
@@ -58,17 +59,81 @@
 }
 
 .is-closing .paper {
-  animation: paper-spin-out 0.38s ease-in both;
+  animation: paper-shut 0.7s both;
 }
 
-@keyframes paper-spin-in {
-  0% { transform: scale(0.04) rotate(-900deg); opacity: 0; }
-  60% { opacity: 1; }
-  100% { transform: scale(1) rotate(-0.6deg); opacity: 1; }
+/*
+ * The paper arrives folded in half down the spine: only the left half shows, with the right-hand
+ * leaf (.paper-fold) lying over it, masthead out. The leaf swings up to edge-on, then the right half
+ * is uncovered from the spine outwards while the leaf's shadow lays down over it.
+ */
+@keyframes paper-open {
+  0% { opacity: 0; transform: translate(25%, 60px) scale(0.82) rotate(3deg); clip-path: inset(-30% 50% -30% -30%); }
+  30% { opacity: 1; transform: translate(25%, 0) scale(1) rotate(-0.6deg); clip-path: inset(-30% 50% -30% -30%); animation-timing-function: ease-in; }
+  58% { transform: translate(12%, 0) rotate(-0.6deg); clip-path: inset(-30% 50% -30% -30%); animation-timing-function: ease-out; }
+  99% { transform: rotate(-0.6deg); clip-path: inset(-30% 0 -30% -30%); }
+  100% { opacity: 1; transform: rotate(-0.6deg); clip-path: inset(-30%); }
 }
 
-@keyframes paper-spin-out {
-  to { transform: scale(0.85) rotate(4deg) translateY(30px); opacity: 0; }
+@keyframes paper-shut {
+  0% { opacity: 1; transform: rotate(-0.6deg); clip-path: inset(-30% 0 -30% -30%); animation-timing-function: ease-in; }
+  40% { transform: translate(12%, 0) rotate(-0.6deg); clip-path: inset(-30% 50% -30% -30%); animation-timing-function: ease-out; }
+  66% { opacity: 1; transform: translate(25%, 0) scale(1) rotate(-0.6deg); clip-path: inset(-30% 50% -30% -30%); animation-timing-function: ease-in; }
+  100% { opacity: 0; transform: translate(25%, 60px) scale(0.82) rotate(3deg); clip-path: inset(-30% 50% -30% -30%); }
+}
+
+.paper-fold {
+  /* the right-hand leaf; hinged on the spine */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 50%;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(270deg, rgba(80, 60, 30, 0.22), transparent 12%),
+    radial-gradient(ellipse at 70% 10%, rgba(255, 255, 255, 0.55), transparent 55%),
+    #f2ead8;
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transform-origin: 0 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: leaf-open 1s both;
+}
+
+.paper-fold span {
+  /* un-mirror the masthead: the leaf is seen from behind while folded */
+  transform: scaleX(-1);
+  padding: 0 8%;
+  font-family: 'UnifrakturMaguntia', 'Old English Text MT', serif;
+  font-size: clamp(30px, 5vw, 60px);
+  line-height: 1.05;
+  text-align: center;
+  color: var(--ink);
+  border-top: 3px double var(--rule);
+  border-bottom: 3px double var(--rule);
+}
+
+.is-closing .paper-fold {
+  animation: leaf-shut 0.7s both;
+}
+
+@keyframes leaf-open {
+  0%, 30% { opacity: 1; transform: perspective(1600px) rotateY(-180deg); animation-timing-function: ease-in; }
+  58% { opacity: 1; transform: perspective(1600px) rotateY(-90deg); background-color: #f2ead8; }
+  59% { opacity: 0.4; transform: perspective(1600px) rotateY(-90deg); }
+  100% { opacity: 0; transform: perspective(1600px) rotateY(0deg); }
+}
+
+@keyframes leaf-shut {
+  0% { opacity: 0; transform: perspective(1600px) rotateY(0deg); animation-timing-function: ease-in; }
+  39% { opacity: 0.4; transform: perspective(1600px) rotateY(-90deg); }
+  40% { opacity: 1; transform: perspective(1600px) rotateY(-90deg); animation-timing-function: ease-out; }
+  66%, 100% { opacity: 1; transform: perspective(1600px) rotateY(-180deg); }
 }
 
 .paper-close {
@@ -340,6 +405,9 @@
 @media (prefers-reduced-motion: reduce) {
   .paper,
   .is-closing .paper,
+  .paper-fold,
+  .is-closing .paper-fold,
+  .paper-backdrop.is-closing,
   .paper-lead {
     animation: none;
   }

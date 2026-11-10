@@ -25,7 +25,7 @@ function Newspaper() {
     if (closing) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setClosing(true);
-    setTimeout(() => navigate('/'), reduce ? 0 : 380);
+    setTimeout(() => navigate('/'), reduce ? 0 : 700);
   };
 
   useEffect(() => {
@@ -51,6 +51,8 @@ function Newspaper() {
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* the folded-over leaf that swings open (and shut) around the spine */}
+        <div className="paper-fold" aria-hidden="true"><span>The Daily Blog</span></div>
         <button type="button" className="paper-close" onClick={close} aria-label="Close newspaper">×</button>
 
         <header className="paper-head">
